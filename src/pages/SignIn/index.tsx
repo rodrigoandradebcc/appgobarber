@@ -16,6 +16,7 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
 
+import { useAuth } from '../../hooks/auth';
 import {
   Container,
   Title,
@@ -40,6 +41,9 @@ const SignIn: React.FC = () => {
   const passwordInputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
 
+  const { signIn, user } = useAuth();
+  console.log(user);
+
   const handleSignIn = useCallback(async (data: SignInFormData) => {
     try {
       formRef.current?.setErrors({});
@@ -53,10 +57,10 @@ const SignIn: React.FC = () => {
         abortEarly: false,
       });
 
-      // await signIn({
-      //   email: data.email,
-      //   password: data.password,
-      // });
+      await signIn({
+        email: data.email,
+        password: data.password,
+      });
 
       // history.push('dashboard');
     } catch (err) {
@@ -69,6 +73,8 @@ const SignIn: React.FC = () => {
         'Erro na autenticação',
         'Ocorreu um erro no fazer login, cheque as credenciais',
       );
+
+      console.log(err);
     }
   }, []);
 
@@ -113,13 +119,7 @@ const SignIn: React.FC = () => {
                 }}
               />
 
-              <Button
-                onPress={() => {
-                  console.log('Btn Entrar');
-                }}
-              >
-                Entrar
-              </Button>
+              <Button onPress={() => {}}>Entrar</Button>
             </Form>
 
             <ForgotPassword onPress={() => {}}>
