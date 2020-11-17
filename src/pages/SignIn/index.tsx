@@ -41,8 +41,8 @@ const SignIn: React.FC = () => {
   const passwordInputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
 
-  const { signIn, user } = useAuth();
-  console.log(user);
+  const { signIn } = useAuth();
+  // console.log(user);
 
   const handleSignIn = useCallback(async (data: SignInFormData) => {
     try {
@@ -62,6 +62,8 @@ const SignIn: React.FC = () => {
         password: data.password,
       });
 
+      console.log('AQUI');
+
       // history.push('dashboard');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
@@ -76,7 +78,7 @@ const SignIn: React.FC = () => {
 
       console.log(err);
     }
-  }, []);
+  }, [signIn]);
 
   return (
     <>
@@ -119,10 +121,12 @@ const SignIn: React.FC = () => {
                 }}
               />
 
-              <Button onPress={() => {}}>Entrar</Button>
+              <Button onPress={() => {
+                formRef.current?.submitForm();
+              }}>Entrar</Button>
             </Form>
 
-            <ForgotPassword onPress={() => {}}>
+            <ForgotPassword onPress={() => { }}>
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
             </ForgotPassword>
           </Container>
