@@ -15,6 +15,7 @@ interface ProviderNameProps {
 export const Container = styled.View`
   flex: 1;
 `;
+
 export const Header = styled.View`
   padding: 24px;
   padding-top: ${getStatusBarHeight() + 24}px;
@@ -42,6 +43,7 @@ export const UserAvatar = styled.Image`
 
 export const ProvidersListContainer = styled.View`
   height: 112px;
+  flex: 1;
 `;
 
 export const ProvidersList = styled(FlatList as new () => FlatList<Provider>)`
