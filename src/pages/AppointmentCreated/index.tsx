@@ -2,7 +2,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import ptBR from 'date-fns/locale/pt-BR';
-import { format } from 'prettier';
+import { format } from 'date-fns';
 import {
   Container,
   Title,
@@ -17,9 +17,9 @@ interface RouteParams {
 
 const AppointmentCreated: React.FC = () => {
   const { reset } = useNavigation();
-  const { params } = useRoute();
+  const route = useRoute();
 
-  const routeParams = params as RouteParams;
+  const params = route.params as RouteParams;
 
   const handleOkPressed = useCallback(() => {
     reset({
@@ -30,11 +30,11 @@ const AppointmentCreated: React.FC = () => {
 
   const formattedDate = useMemo(() => {
     return format(
-      routeParams.date,
+      params.date,
       "EEEE', dia' dd 'de' MMMM 'de' yyyy 'às' HH:mm'h'",
       { locale: ptBR },
     );
-  }, [routeParams.date]);
+  }, [params.date]);
 
   return (
     <Container>

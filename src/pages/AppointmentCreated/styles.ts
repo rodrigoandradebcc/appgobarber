@@ -5,6 +5,7 @@ export const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
+
   padding: 0 24px;
 `;
 
@@ -21,6 +22,7 @@ export const Description = styled.Text`
   font-size: 18px;
   color: #999591;
   margin-top: 16px;
+  text-align: center;
 `;
 
 export const OkButton = styled(RectButton)`
