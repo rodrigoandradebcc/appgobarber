@@ -13,6 +13,7 @@ export const Container = styled(RectButton)<ButtonProps>`
   margin-top: 8px;
   /* background: #ff9000; */
   background: ${props => (props.isCancelButton ? '#c53030' : '#ff9000')};
+  margin-top: ${props => (props.isCancelButton ? '15px' : 0)};
 
   justify-content: center;
   align-items: center;

@@ -1,6 +1,8 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'react-native-image-picker/src';
+import Modal from 'react-native-modal';
 import {
   Image,
   View,
@@ -9,13 +11,20 @@ import {
   Platform,
   TextInput,
   Alert,
+  Button as ButtonRN,
 } from 'react-native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
-import { UserAvatarButton, UserAvatar, BackButton } from './styles';
+import {
+  UserAvatarButton,
+  UserAvatar,
+  BackButton,
+  UploadButton,
+  Container,
+  Title,
+} from './styles';
 import getValidationErrors from '../../utils/getValidationErrors';
-import { Container, Title } from './styles';
 import api from '../../services/api';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -35,6 +44,7 @@ const Profile: React.FC = () => {
 
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
+  const [showModalUpdateAvatar, setShowModalUpdateAvatar] = useState(false);
 
   const emailInputRef = useRef<TextInput>(null);
   const oldPasswordInputRef = useRef<TextInput>(null);
@@ -116,6 +126,57 @@ const Profile: React.FC = () => {
     [navigation, updateUser],
   );
 
+  const toggleModal = useCallback(() => {
+    setShowModalUpdateAvatar(!showModalUpdateAvatar);
+  }, [showModalUpdateAvatar]);
+
+  const updatePhotoFromCamera = useCallback(() => {
+    ImagePicker.launchCamera(
+      {
+        mediaType: 'photo',
+        saveToPhotos: true,
+        quality: 0.5,
+      },
+      async response => {
+        const data = new FormData();
+
+        data.append('avatar', {
+          type: 'image/jpeg',
+          name: `${user.id}.jpg`,
+          uri: response.uri,
+        });
+
+        const apiResponse = await api.patch('users/avatar', data);
+
+        await updateUser(apiResponse.data);
+        toggleModal();
+      },
+    );
+  }, [toggleModal, updateUser, user.id]);
+
+  const updatePhotoFromGallery = useCallback(() => {
+    ImagePicker.launchImageLibrary(
+      {
+        mediaType: 'photo',
+        quality: 0.5,
+      },
+      async response => {
+        const data = new FormData();
+
+        data.append('avatar', {
+          type: 'image/jpeg',
+          name: `${user.id}.jpg`,
+          uri: response.uri,
+        });
+
+        const apiResponse = await api.patch('users/avatar', data);
+
+        await updateUser(apiResponse.data);
+        toggleModal();
+      },
+    );
+  }, [toggleModal, updateUser, user.id]);
+
   const handleGoBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -138,10 +199,10 @@ const Profile: React.FC = () => {
           scrollEnabled
         >
           <Container>
-            <BackButton onPress={() => {}}>
+            <BackButton onPress={handleGoBack}>
               <Icon name="chevron-left" size={24} color="#999591" />
             </BackButton>
-            <UserAvatarButton onPress={handleGoBack}>
+            <UserAvatarButton onPress={toggleModal}>
               <UserAvatar source={{ uri: user.avatar_url }} />
             </UserAvatarButton>
             <View>
@@ -211,6 +272,25 @@ const Profile: React.FC = () => {
             </Form>
           </Container>
         </ScrollView>
+
+        <Modal
+          isVisible={showModalUpdateAvatar}
+          backdropOpacity={0.9}
+          backdropColor="#3e3b47"
+        >
+          <UploadButton>
+            <ButtonRN title="Usar câmera" onPress={updatePhotoFromCamera} />
+          </UploadButton>
+          <UploadButton>
+            <ButtonRN
+              title="Selecionar da galera"
+              onPress={updatePhotoFromGallery}
+            />
+          </UploadButton>
+          <UploadButton>
+            <ButtonRN title="Cancelar" onPress={toggleModal} color="red" />
+          </UploadButton>
+        </Modal>
       </KeyboardAvoidingView>
     </>
   );

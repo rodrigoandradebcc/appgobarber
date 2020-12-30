@@ -38,3 +38,8 @@ export const UserAvatar = styled.Image`
 
   align-self: center;
 `;
+
+export const UploadButton = styled.View`
+  margin-bottom: 20px;
+  height: 40px;
+`;
